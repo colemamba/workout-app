@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Workout Generator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Daily Workout Generator</h1>
+            <p class="subtitle">Select your training focus for today</p>
+        </header>
+
+        <div class="button-group">
+            <button class="workout-btn push-btn" data-workout="push">
+                <span class="btn-icon">💪</span>
+                <span class="btn-text">Push Day</span>
+                <span class="btn-desc">Chest, Shoulders, Triceps</span>
+            </button>
+            <button class="workout-btn pull-btn" data-workout="pull">
+                <span class="btn-icon">🏋️</span>
+                <span class="btn-text">Pull Day</span>
+                <span class="btn-desc">Back, Biceps, Rear Delts</span>
+            </button>
+            <button class="workout-btn legs-btn" data-workout="legs">
+                <span class="btn-icon">🦵</span>
+                <span class="btn-text">Legs Day</span>
+                <span class="btn-desc">Quads, Hamstrings, Glutes, Calves</span>
+            </button>
+        </div>
+
+        <div id="workout-display" class="workout-display hidden">
+            <div class="workout-header">
+                <h2 id="workout-title"></h2>
+                <button id="regenerate-btn" class="regenerate-btn">🔄 New Workout</button>
+            </div>
+            <div id="exercise-list" class="exercise-list"></div>
+            <div class="workout-footer">
+                <p class="tip" id="workout-tip"></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

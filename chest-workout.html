@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chest Workout Guide</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+      font-family: 'Outfit', sans-serif;
+      background: linear-gradient(135deg, #0F172A 0%, #1a1a2e 100%);
+      color: #F1F5F9;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    .muscle-diagram {
+      position: relative;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% {
+        opacity: 0.8;
+        filter: drop-shadow(0 0 8px rgba(255, 68, 68, 0.5));
+      }
+      50% {
+        opacity: 1;
+        filter: drop-shadow(0 0 20px rgba(255, 68, 68, 0.8));
+      }
+    }
+
+    .chest-highlight {
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+
+    .card {
+      background: #1E293B;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .workout-row {
+      transition: all 0.3s ease;
+      position: relative;
+      border-bottom: 1px solid rgba(100, 116, 139, 0.3);
+    }
+
+    .workout-row:last-child {
+      border-bottom: none;
+    }
+
+    .workout-row:hover {
+      background: rgba(255, 68, 68, 0.1);
+    }
+
+    .exercise-cell {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .exercise-name-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .swap-indicator {
+      font-size: 12px;
+      color: #64748B;
+      transition: color 0.2s;
+    }
+
+    .exercise-cell:hover .swap-indicator {
+      color: #FF4444;
+    }
+
+    .exercise-swap-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      min-width: 320px;
+      max-height: 400px;
+      overflow-y: auto;
+      background: rgba(30, 41, 59, 0.98);
+      border: 2px solid #FF4444;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 4px;
+      z-index: 1000;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      display: none;
+    }
+
+    .exercise-cell:hover .exercise-swap-menu {
+      display: block;
+    }
+
+    .swap-menu-header {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .filter-btn.active {
+      border-color: currentColor;
+    }
+
+    .filter-btn.equipment {
+      background: rgba(59, 130, 246, 0.2);
+      color: #60A5FA;
+    }
+
+    .filter-btn.equipment.active {
+      background: rgba(59, 130, 246, 0.4);
+    }
+
+    .filter-btn.difficulty {
+      background: rgba(34, 197, 94, 0.2);
+      color: #4ADE80;
+    }
+
+    .filter-btn.difficulty.active {
+      background: rgba(34, 197, 94, 0.4);
+    }
+
+    .swap-option {
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin: 4px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .swap-option:hover {
+      background: #FF4444;
+      transform: translateX(4px);
+    }
+
+    .swap-option-name {
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .swap-option-meta {
+      display: flex;
+      gap: 8px;
+      font-size: 11px;
+    }
+
+    .tag {
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tag.equipment {
+      background: rgba(59, 130, 246, 0.3);
+      color: #93C5FD;
+    }
+
+    .tag.beginner {
+      background: rgba(34, 197, 94, 0.3);
+      color: #86EFAC;
+    }
+
+    .tag.intermediate {
+      background: rgba(251, 191, 36, 0.3);
+      color: #FDE047;
+    }
+
+    .tag.advanced {
+      background: rgba(239, 68, 68, 0.3);
+      color: #FCA5A5;
+    }
+
+    .current-tags {
+      display: flex;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .muscle-label {
+      font-size: 13px;
+      color: #94A3B8;
+      font-weight: 500;
+    }
+
+    /* Scrollbar styling */
+    .exercise-swap-menu::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .exercise-swap-menu::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 3px;
+    }
+
+    .exercise-swap-menu::-webkit-scrollbar-thumb {
+      background: #FF4444;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body class="h-full">
+  <div id="app" class="w-full h-full overflow-auto">
+    <div class="min-h-full p-8">
+      <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-12">
+          <h1 class="text-5xl font-bold mb-3">Chest Workout Guide</h1>
+          <p class="text-xl text-slate-400">Build a powerful chest with targeted exercises</p>
+        </div>
+
+        <!-- Content Grid -->
+        <div class="grid lg:grid-cols-2 gap-12 items-start">
+          <!-- Muscle Diagram -->
+          <div class="card rounded-3xl p-8 shadow-xl">
+            <h2 class="text-2xl font-bold mb-6 text-center">Chest Anatomy</h2>
+            <div class="muscle-diagram">
+              <svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+                <!-- Head -->
+                <ellipse cx="200" cy="60" rx="45" ry="55" fill="#FFD4A3" stroke="#8B4513" stroke-width="2"/>
+                <!-- Neck -->
+                <rect x="180" y="105" width="40" height="30" fill="#FFD4A3" stroke="#8B4513" stroke-width="2"/>
+                <!-- Shoulders -->
+                <ellipse cx="140" cy="155" rx="35" ry="25" fill="#E8B88F" stroke="#8B4513" stroke-width="2"/>
+                <ellipse cx="260" cy="155" rx="35" ry="25" fill="#E8B88F" stroke="#8B4513" stroke-width="2"/>
+                <!-- Upper Arms -->
+                <ellipse cx="120" cy="210" rx="25" ry="55" fill="#E8B88F" stroke="#8B4513" stroke-width="2"/>
+                <ellipse cx="280" cy="210" rx="25" ry="55" fill="#E8B88F" stroke="#8B4513" stroke-width="2"/>
+                <!-- Forearms -->
+                <path d="M 120 260 L 110 340 L 130 340 L 120 260 Z" fill="#E8B88F" stroke="#8B4513" stroke-width="2"/>
+                <path d="M 280 260 L 270 340 L 290 340 L 280 260 Z" fill="#E8B88F" stroke="#8B4513" stroke-width="2"/>
+
+                <!-- Torso (Chest Area - HIGHLIGHTED) -->
+                <path d="M 155 135 Q 145 180, 145 230 L 145 280 Q 150 300, 200 300 Q 250 300, 255 280 L 255 230 Q 255 180, 245 135 L 225 145 Q 200 155, 175 145 Z"
+                      class="chest-highlight" fill="#FF4444" stroke="#CC0000" stroke-width="3" opacity="0.9"/>
+
+                <!-- Pectoralis Major Upper (highlighted detail) -->
+                <ellipse cx="175" cy="170" rx="20" ry="15" class="chest-highlight" fill="#FF6666" stroke="#DD0000" stroke-width="2"/>
+                <ellipse cx="225" cy="170" rx="20" ry="15" class="chest-highlight" fill="#FF6666" stroke="#DD0000" stroke-width="2"/>
+
+                <!-- Pectoralis Major Lower (highlighted detail) -->
+                <ellipse cx="175" cy="210" rx="22" ry="25" class="chest-highlight" fill="#FF5555" stroke="#DD0000" stroke-width="2"/>
+                <ellipse cx="225" cy="210" rx="22" ry="25" class="chest-highlight" fill="#FF5555" stroke="#DD0000" stroke-width="2"/>
+
+                <!-- Sternum line -->
+                <line x1="200" y1="140" x2="200" y2="260" stroke="#990000" stroke-width="2"/>
+
+                <!-- Abs (lower torso) -->
+                <rect x="170" y="300" width="60" height="80" rx="5" fill="#E8B88F" stroke="#8B4513" stroke-width="2"/>
+                <line x1="200" y1="300" x2="200" y2="380" stroke="#8B4513" stroke-width="1.5"/>
+                <line x1="170" y1="330" x2="230" y2="330" stroke="#8B4513" stroke-width="1.5"/>
+                <line x1="170" y1="360" x2="230" y2="360" stroke="#8B4513" stroke-width="1.5"/>
+
+                <!-- Legs -->
+                <rect x="165" y="380" width="30" height="100" rx="8" fill="#E8B88F" stroke="#8B4513" stroke-width="2"/>
+                <rect x="205" y="380" width="30" height="100" rx="8" fill="#E8B88F" stroke="#8B4513" stroke-width="2"/>
+
+                <!-- Labels -->
+                <text x="200" y="190" text-anchor="middle" font-size="12" font-weight="bold" fill="#FFFFFF">PECTORALIS</text>
+                <text x="200" y="205" text-anchor="middle" font-size="12" font-weight="bold" fill="#FFFFFF">MAJOR</text>
+              </svg>
+            </div>
+
+            <!-- Muscle Legend -->
+            <div class="mt-6 space-y-2 text-sm">
+              <div class="flex items-center gap-2">
+                <div class="w-4 h-4 rounded bg-red-400"></div>
+                <span class="text-slate-300">Upper Pectoralis (Clavicular Head)</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="w-4 h-4 rounded bg-red-500"></div>
+                <span class="text-slate-300">Mid Pectoralis (Sternal Head)</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <div class="w-4 h-4 rounded bg-red-600"></div>
+                <span class="text-slate-300">Lower Pectoralis (Costal Head)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Workout Table -->
+          <div class="card rounded-3xl p-8 shadow-xl">
+            <h2 class="text-2xl font-bold mb-6">Chest Workout Plan</h2>
+            <p class="text-slate-400 text-sm mb-4">Hover over an exercise to see alternatives</p>
+            <div class="overflow-visible">
+              <table class="w-full">
+                <thead>
+                  <tr class="border-b-2 border-red-500">
+                    <th class="text-left py-4 px-4 font-bold text-lg">Target</th>
+                    <th class="text-left py-4 px-4 font-bold text-lg">Exercise</th>
+                    <th class="text-center py-4 px-4 font-bold text-lg">Sets × Reps</th>
+                  </tr>
+                </thead>
+                <tbody id="workout-table-body">
+                  <!-- Rows generated by JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Comprehensive Exercise Database with Equipment & Difficulty Tags
+    const exerciseDatabase = {
+      "Upper Chest": [
+        { name: "Incline Barbell Press", sets: "4 × 6-8", equipment: "barbell", difficulty: "intermediate" },
+        { name: "Incline Dumbbell Press", sets: "4 × 8-10", equipment: "dumbbell", difficulty: "intermediate" },
+        { name: "Incline Dumbbell Flyes", sets: "3 × 10-12", equipment: "dumbbell", difficulty: "beginner" },
+        { name: "Low-to-High Cable Flyes", sets: "3 × 12-15", equipment: "cable", difficulty: "beginner" },
+        { name: "Incline Machine Press", sets: "3 × 10-12", equipment: "machine", difficulty: "beginner" },
+        { name: "Landmine Press", sets: "3 × 10-12", equipment: "barbell", difficulty: "intermediate" },
+        { name: "Incline Push-Ups (feet elevated)", sets: "3 × 12-15", equipment: "bodyweight", difficulty: "beginner" },
+        { name: "Reverse Grip Bench Press", sets: "3 × 8-10", equipment: "barbell", difficulty: "advanced" },
+        { name: "Incline Smith Machine Press", sets: "3 × 10-12", equipment: "machine", difficulty: "beginner" },
+        { name: "Single-Arm Incline Cable Press", sets: "3 × 10-12", equipment: "cable", difficulty: "intermediate" },
+        { name: "Incline Hex Press", sets: "3 × 12-15", equipment: "dumbbell", difficulty: "intermediate" },
+        { name: "Guillotine Press (Neck Press)", sets: "3 × 10-12", equipment: "barbell", difficulty: "advanced" },
+        { name: "Incline Plate Press", sets: "3 × 15-20", equipment: "plate", difficulty: "beginner" }
+      ],
+
+      "Mid Chest": [
+        { name: "Flat Barbell Bench Press", sets: "4 × 6-8", equipment: "barbell", difficulty: "intermediate" },
+        { name: "Flat Dumbbell Press", sets: "4 × 8-10", equipment: "dumbbell", difficulty: "intermediate" },
+        { name: "Dumbbell Flyes", sets: "3 × 10-12", equipment: "dumbbell", difficulty: "beginner" },
+        { name: "Cable Crossovers (mid height)", sets: "3 × 12-15", equipment: "cable", difficulty: "beginner" },
+        { name: "Machine Chest Press", sets: "3 × 10-12", equipment: "machine", difficulty: "beginner" },
+        { name: "Push-Ups", sets: "3 × 15-20", equipment: "bodyweight", difficulty: "beginner" },
+        { name: "Pec Deck Machine", sets: "3 × 12-15", equipment: "machine", difficulty: "beginner" },
+        { name: "Floor Press", sets: "4 × 6-8", equipment: "barbell", difficulty: "intermediate" },
+        { name: "Dumbbell Floor Press", sets: "3 × 10-12", equipment: "dumbbell", difficulty: "beginner" },
+        { name: "Smith Machine Bench Press", sets: "3 × 8-10", equipment: "machine", difficulty: "beginner" },
+        { name: "Resistance Band Chest Press", sets: "3 × 15-20", equipment: "bands", difficulty: "beginner" },
+        { name: "Single-Arm Dumbbell Press", sets: "3 × 10-12", equipment: "dumbbell", difficulty: "intermediate" },
+        { name: "Close-Grip Bench Press", sets: "3 × 8-10", equipment: "barbell", difficulty: "intermediate" }
+      ],
+
+      "Lower Chest": [
+        { name: "Decline Barbell Press", sets: "4 × 6-8", equipment: "barbell", difficulty: "intermediate" },
+        { name: "Decline Dumbbell Press", sets: "4 × 8-10", equipment: "dumbbell", difficulty: "intermediate" },
+        { name: "Chest Dips", sets: "3 × 8-12", equipment: "bodyweight", difficulty: "intermediate" },
+        { name: "High-to-Low Cable Flyes", sets: "3 × 12-15", equipment: "cable", difficulty: "beginner" },
+        { name: "Decline Machine Press", sets: "3 × 10-12", equipment: "machine", difficulty: "beginner" },
+        { name: "Decline Push-Ups", sets: "3 × 12-15", equipment: "bodyweight", difficulty: "beginner" },
+        { name: "Decline Dumbbell Flyes", sets: "3 × 10-12", equipment: "dumbbell", difficulty: "beginner" },
+        { name: "Weighted Chest Dips", sets: "3 × 6-8", equipment: "bodyweight", difficulty: "advanced" },
+        { name: "Decline Cable Press", sets: "3 × 10-12", equipment: "cable", difficulty: "intermediate" },
+        { name: "Dip Machine", sets: "3 × 10-12", equipment: "machine", difficulty: "beginner" },
+        { name: "Decline Smith Machine Press", sets: "3 × 8-10", equipment: "machine", difficulty: "beginner" },
+        { name: "Straight Bar Cable Pushdown", sets: "3 × 12-15", equipment: "cable", difficulty: "beginner" }
+      ],
+
+      "Inner Chest": [
+        { name: "Dumbbell Squeeze Press", sets: "3 × 10-12", equipment: "dumbbell", difficulty: "beginner" },
+        { name: "Cable Crossovers (squeeze hold)", sets: "3 × 12-15", equipment: "cable", difficulty: "beginner" },
+        { name: "Plate Pinch Press", sets: "3 × 12-15", equipment: "plate", difficulty: "beginner" },
+        { name: "Diamond Push-Ups", sets: "3 × 12-15", equipment: "bodyweight", difficulty: "intermediate" },
+        { name: "Single-Arm Cable Crossover", sets: "3 × 12-15", equipment: "cable", difficulty: "intermediate" },
+        { name: "Pec Deck (peak squeeze)", sets: "3 × 15-20", equipment: "machine", difficulty: "beginner" },
+        { name: "Hex Press", sets: "3 × 10-12", equipment: "dumbbell", difficulty: "beginner" },
+        { name: "Close-Grip Push-Ups", sets: "3 × 15-20", equipment: "bodyweight", difficulty: "beginner" },
+        { name: "Svend Press", sets: "3 × 15-20", equipment: "plate", difficulty: "beginner" },
+        { name: "Cable Iron Cross", sets: "3 × 12-15", equipment: "cable", difficulty: "advanced" },
+        { name: "Incline Dumbbell Squeeze Press", sets: "3 × 10-12", equipment: "dumbbell", difficulty: "intermediate" },
+        { name: "Low Cable Flyes (hands together)", sets: "3 × 15-20", equipment: "cable", difficulty: "beginner" }
+      ],
+
+      "Chest (Overall/Stretch)": [
+        { name: "Dumbbell Pullovers", sets: "3 × 10-12", equipment: "dumbbell", difficulty: "intermediate" },
+        { name: "Cable Pullovers", sets: "3 × 12-15", equipment: "cable", difficulty: "beginner" },
+        { name: "Incline Dumbbell Pullover", sets: "3 × 10-12", equipment: "dumbbell", difficulty: "intermediate" },
+        { name: "Machine Pullover", sets: "3 × 12-15", equipment: "machine", difficulty: "beginner" },
+        { name: "Wide Push-Ups", sets: "3 × 15-20", equipment: "bodyweight", difficulty: "beginner" },
+        { name: "Deficit Push-Ups", sets: "3 × 10-12", equipment: "bodyweight", difficulty: "intermediate" },
+        { name: "Stability Ball Push-Ups", sets: "3 × 12-15", equipment: "bodyweight", difficulty: "intermediate" },
+        { name: "TRX Chest Press", sets: "3 × 12-15", equipment: "bodyweight", difficulty: "intermediate" },
+        { name: "TRX Chest Flyes", sets: "3 × 12-15", equipment: "bodyweight", difficulty: "intermediate" },
+        { name: "Banded Push-Ups", sets: "3 × 12-15", equipment: "bands", difficulty: "intermediate" },
+        { name: "Archer Push-Ups", sets: "3 × 8-10 each", equipment: "bodyweight", difficulty: "advanced" },
+        { name: "Clapping Push-Ups", sets: "3 × 8-10", equipment: "bodyweight", difficulty: "advanced" }
+      ]
+    };
+
+    // Current workout selection (initialize with defaults - first exercise of each group)
+    let currentWorkout = [
+      { muscle: "Upper Chest", exerciseIndex: 0 },
+      { muscle: "Mid Chest", exerciseIndex: 0 },
+      { muscle: "Lower Chest", exerciseIndex: 2 },  // Start with Dips
+      { muscle: "Inner Chest", exerciseIndex: 1 },  // Cable Crossovers
+      { muscle: "Chest (Overall/Stretch)", exerciseIndex: 0 }  // Pullovers
+    ];
+
+    // Active filters
+    let activeFilters = {
+      equipment: null,
+      difficulty: null
+    };
+
+    function swapExercise(rowIndex, newExerciseIndex) {
+      currentWorkout[rowIndex].exerciseIndex = newExerciseIndex;
+      renderWorkoutTable();
+    }
+
+    function getFilteredExercises(muscle) {
+      let exercises = exerciseDatabase[muscle];
+
+      if (activeFilters.equipment) {
+        exercises = exercises.filter(ex => ex.equipment === activeFilters.equipment);
+      }
+      if (activeFilters.difficulty) {
+        exercises = exercises.filter(ex => ex.difficulty === activeFilters.difficulty);
+      }
+
+      return exercises;
+    }
+
+    function createSwapMenu(muscle, rowIndex) {
+      const exercises = exerciseDatabase[muscle];
+      const currentExercise = exercises[currentWorkout[rowIndex].exerciseIndex];
+
+      // Get unique equipment types and difficulties for this muscle
+      const equipmentTypes = [...new Set(exercises.map(ex => ex.equipment))];
+      const difficulties = ['beginner', 'intermediate', 'advanced'];
+
+      let menuHTML = `
+        <div class="swap-menu-header">
+          <span class="text-xs text-slate-400 w-full mb-1">Filter by:</span>
+      `;
+
+      // Equipment filter buttons
+      equipmentTypes.forEach(eq => {
+        menuHTML += `
+          <button class="filter-btn equipment" data-filter="equipment" data-value="${eq}">
+            ${eq}
+          </button>
+        `;
+      });
+
+      menuHTML += `</div><div class="swap-menu-header">`;
+
+      // Difficulty filter buttons
+      difficulties.forEach(diff => {
+        if (exercises.some(ex => ex.difficulty === diff)) {
+          menuHTML += `
+            <button class="filter-btn difficulty" data-filter="difficulty" data-value="${diff}">
+              ${diff}
+            </button>
+          `;
+        }
+      });
+
+      menuHTML += `</div><div class="swap-options">`;
+
+      // Exercise options
+      exercises.forEach((ex, index) => {
+        const isSelected = index === currentWorkout[rowIndex].exerciseIndex;
+        menuHTML += `
+          <div class="swap-option ${isSelected ? 'bg-slate-700' : ''}" data-row="${rowIndex}" data-index="${index}" data-equipment="${ex.equipment}" data-difficulty="${ex.difficulty}">
+            <span class="swap-option-name">${ex.name}</span>
+            <div class="swap-option-meta">
+              <span class="tag equipment">${ex.equipment}</span>
+              <span class="tag ${ex.difficulty}">${ex.difficulty}</span>
+              <span class="text-slate-400">${ex.sets}</span>
+            </div>
+          </div>
+        `;
+      });
+
+      menuHTML += `</div>`;
+
+      return menuHTML;
+    }
+
+    function renderWorkoutTable() {
+      const tbody = document.getElementById('workout-table-body');
+      tbody.innerHTML = '';
+
+      currentWorkout.forEach((workout, rowIndex) => {
+        const muscle = workout.muscle;
+        const exercise = exerciseDatabase[muscle][workout.exerciseIndex];
+
+        const row = document.createElement('tr');
+        row.className = 'workout-row';
+
+        // Muscle cell
+        const muscleCell = document.createElement('td');
+        muscleCell.className = 'py-4 px-4';
+        muscleCell.innerHTML = `<span class="muscle-label">${muscle}</span>`;
+        row.appendChild(muscleCell);
+
+        // Exercise cell with swap menu
+        const exerciseCell = document.createElement('td');
+        exerciseCell.className = 'py-4 px-4 exercise-cell';
+        exerciseCell.innerHTML = `
+          <div class="exercise-name-wrapper">
+            <span class="font-semibold">${exercise.name}</span>
+            <span class="swap-indicator">▼</span>
+          </div>
+          <div class="current-tags">
+            <span class="tag equipment">${exercise.equipment}</span>
+            <span class="tag ${exercise.difficulty}">${exercise.difficulty}</span>
+          </div>
+          <div class="exercise-swap-menu">
+            ${createSwapMenu(muscle, rowIndex)}
+          </div>
+        `;
+        row.appendChild(exerciseCell);
+
+        // Sets/Reps cell
+        const setsCell = document.createElement('td');
+        setsCell.className = 'text-center py-4 px-4 font-bold text-lg';
+        setsCell.textContent = exercise.sets;
+        row.appendChild(setsCell);
+
+        tbody.appendChild(row);
+      });
+
+      // Add event listeners for swap options
+      document.querySelectorAll('.swap-option').forEach(option => {
+        option.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const rowIndex = parseInt(option.dataset.row);
+          const exerciseIndex = parseInt(option.dataset.index);
+          swapExercise(rowIndex, exerciseIndex);
+        });
+      });
+
+      // Add event listeners for filter buttons
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const filterType = btn.dataset.filter;
+          const value = btn.dataset.value;
+
+          // Toggle filter
+          if (activeFilters[filterType] === value) {
+            activeFilters[filterType] = null;
+            btn.classList.remove('active');
+          } else {
+            // Remove active from siblings
+            btn.parentElement.querySelectorAll(`.filter-btn.${filterType}`).forEach(b => b.classList.remove('active'));
+            activeFilters[filterType] = value;
+            btn.classList.add('active');
+          }
+
+          // Filter the visible options
+          const swapOptions = btn.closest('.exercise-swap-menu').querySelectorAll('.swap-option');
+          swapOptions.forEach(opt => {
+            let show = true;
+            if (activeFilters.equipment && opt.dataset.equipment !== activeFilters.equipment) {
+              show = false;
+            }
+            if (activeFilters.difficulty && opt.dataset.difficulty !== activeFilters.difficulty) {
+              show = false;
+            }
+            opt.style.display = show ? 'flex' : 'none';
+          });
+        });
+      });
+    }
+
+    // Initialize table on load
+    renderWorkoutTable();
+  </script>
+</body>
+</html>

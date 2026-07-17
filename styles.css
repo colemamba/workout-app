@@ -1,0 +1,255 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    min-height: 100vh;
+    color: #fff;
+    padding: 20px;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-top: 20px;
+}
+
+h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.subtitle {
+    color: #8892b0;
+    font-size: 1rem;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 30px;
+}
+
+.workout-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.workout-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.workout-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.workout-btn:hover::before {
+    opacity: 1;
+}
+
+.push-btn {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+}
+
+.push-btn:hover {
+    box-shadow: 0 10px 40px rgba(231, 76, 60, 0.4);
+}
+
+.pull-btn {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+}
+
+.pull-btn:hover {
+    box-shadow: 0 10px 40px rgba(52, 152, 219, 0.4);
+}
+
+.legs-btn {
+    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+}
+
+.legs-btn:hover {
+    box-shadow: 0 10px 40px rgba(46, 204, 113, 0.4);
+}
+
+.btn-icon {
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+.btn-text {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+}
+
+.btn-desc {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.workout-display {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 24px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    animation: slideUp 0.4s ease;
+}
+
+.workout-display.hidden {
+    display: none;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.workout-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.workout-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.regenerate-btn {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.regenerate-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.exercise-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.exercise-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    transition: all 0.2s ease;
+}
+
+.exercise-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.exercise-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.exercise-name {
+    font-weight: 600;
+    font-size: 1.05rem;
+}
+
+.exercise-muscle {
+    font-size: 0.8rem;
+    color: #8892b0;
+}
+
+.exercise-sets {
+    text-align: right;
+}
+
+.sets-number {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #00d4ff;
+}
+
+.sets-label {
+    font-size: 0.75rem;
+    color: #8892b0;
+    display: block;
+}
+
+.workout-footer {
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.tip {
+    font-size: 0.9rem;
+    color: #8892b0;
+    font-style: italic;
+    text-align: center;
+}
+
+/* Active state for buttons */
+.workout-btn.active {
+    transform: scale(0.98);
+    opacity: 0.9;
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+    .button-group {
+        flex-direction: row;
+    }
+
+    .workout-btn {
+        flex: 1;
+    }
+}
